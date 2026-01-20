@@ -1,5 +1,4 @@
-streamlit
-numpy
-python-binance
+flask
 python-dotenv
-streamlit-autorefresh
+openai
+requests
