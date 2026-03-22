@@ -222,7 +222,7 @@ if(getVal("fisher")) tituloText += ` - ${getVal("fisher")}`;
         "", tituloVal, "", estado, "", 
         "https://http2.mlstatic.com/D_NQ_NP_697806-MLA88371869892_072025-F.jpg",
         "", 1, calcPrecio, descVal, 10, 14, 1, 0.1, "", "No agregar cuotas", "", "Mercado Envíos", "A cargo del comprador", "Acepto", "Garantía del vendedor",
-        7, "días", "", fechaVal, paisVal, "", "", metalVal, "", valorVal, 
+        7, "días", "", fechaVal, paisVal, "", "", metalVal, "", Number(valorVal.replace(",", ".")), 
         consVal === "Proof" ? "Proof" : "Calidad de Circulación"  // AG
       ];
 
