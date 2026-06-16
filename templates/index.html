@@ -10,8 +10,12 @@
     .left-panel { display: flex; flex-direction: column; align-items: center; }
     .dropzone { width: 100%; max-width: 320px; height: 100px; border: 2px dashed #cbd5e1; border-radius: 15px; background: #fff; display: flex; justify-content: center; align-items: center; color: #555; font-size: 1rem; text-align: center; margin-bottom: 20px; }
     .dropzone.hover { border-color: #0d6efd; background: #e7f1ff; }
+    .dropzone.loaded { border-color: #198754; background: #eaffee; color: #198754; font-weight: bold; }
     #placeholder { user-select: none; }
-    .action-btn { padding: 10px 20px; font-size: 1rem; border-radius: 10px; border: none; background: #0d6efd; color: white; cursor: not-allowed; margin-top: 10px; height: 42px; }
+    .action-btn { padding: 10px 20px; font-size: 1rem; border-radius: 10px; border: none; background: #0d6efd; color: white; cursor: not-allowed; margin-top: 5px; height: 42px; }
+    .clear-btn { padding: 10px 20px; font-size: 1rem; border-radius: 10px; border: none; background: #6c757d; color: white; cursor: pointer; margin-top: 5px; height: 42px; }
+    .clear-btn:hover { background: #5a6268; }
+    .btn-row { display: flex; align-items: center; gap: 10px; }
     .data-panel { display: flex; flex-direction: column; gap: 8px; align-items: stretch; }
     .field { display: flex; align-items: center; gap: 6px; }
     .field label { font-weight: bold; min-width: 110px; text-align: right; }
@@ -20,7 +24,7 @@
     .process-btn-row { display: flex; align-items: center; gap: 6px; margin-top: 20px; }
     .process-btn-row label { min-width: 110px; }
     .process-btn-row button { flex: 1; height: 42px; border-radius: 10px; border: none; background: #0d6efd; color: white; font-size: 0.95rem; cursor: not-allowed; }
-    .right-panel { grid-column: 3 / span 2; display: flex; flex-direction: column; gap: 12px; align-items: flex-start; } 
+    .right-panel { grid-column: 3 / span 2; display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
     .extended-field { display: flex; align-items: flex-start; gap: 6px; width: 100%; }
     .extended-field label { font-weight: bold; min-width: 110px; text-align: right; padding-top: 6px; }
     .extended-field input, .extended-field textarea { flex: 1; border-radius: 6px; border: 1px solid #bbb; padding: 6px 8px; font-size: 0.85rem; background: #d3d3d3; color: #555; }
@@ -28,26 +32,115 @@
     #titulo { height: 26px; }
     #descripcion { height: 280px; resize: none; overflow: hidden; }
 
-    .excel-btn-container { 
-      display: flex; 
-      justify-content: center; 
+    .excel-btn-container {
+      display: flex;
+      justify-content: center;
       width: calc(100% - 110px);
-      margin-top: 10px; 
-      margin-left: 110px; 
+      margin-top: 10px;
+      margin-left: 110px;
     }
     #excelBtn { padding: 10px 20px; font-size: 1rem; border-radius: 10px; border: none; background: #0d6efd; color: white; cursor: not-allowed; height: 42px; }
+
+    /* --- ML TEMPLATE SECTION --- */
+    .ml-section { display: flex; flex-direction: column; align-items: center; width: 100%; margin-top: 28px; }
+    #dropzoneML { width: 100%; max-width: 320px; height: 100px; border: 2px dashed #cbd5e1; border-radius: 15px; background: #fff; display: flex; justify-content: center; align-items: center; color: #555; font-size: 1rem; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+    #dropzoneML.hover { border-color: #0d6efd; background: #e7f1ff; }
+    #dropzoneML.loaded { border-color: #198754; background: #eaffee; color: #198754; font-weight: bold; }
+    #downloadBtn {
+      margin-top: 28px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: none;
+      background: #0d6efd;
+      color: white;
+      cursor: not-allowed;
+      height: 42px;
+      width: 100%;
+      max-width: 320px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    #downloadBtn .badge {
+      background: white;
+      color: #0d6efd;
+      font-weight: bold;
+      font-size: 0.8rem;
+      border-radius: 20px;
+      padding: 2px 9px;
+      min-width: 24px;
+      text-align: center;
+    }
+
+    /* --- URL DROPZONE --- */
+    #dropzoneURL {
+      margin-top: 28px;
+      width: 100%;
+      max-width: 320px;
+      height: 100px;
+      border: 2px dashed #cbd5e1;
+      border-radius: 15px;
+      background: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #555;
+      font-size: 1rem;
+      text-align: center;
+      cursor: text;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+    }
+    #dropzoneURL.loaded {
+      border-color: #198754;
+      background: #eaffee;
+      color: #198754;
+      font-weight: bold;
+    }
+    #urlHiddenInput {
+      position: absolute;
+      opacity: 0;
+      width: 1px;
+      height: 1px;
+    }
   </style>
 </head>
 <body>
   <h1>COIN PUBLISHER - NR</h1>
   <div class="layout">
     <div class="left-panel">
+      <!-- DROPZONE CAPTURAS -->
       <div id="dropzone" class="dropzone">
         <span id="placeholder">Arrastrar Captura Aquí</span>
         <span id="filename" style="display:none; font-weight:bold;"></span>
       </div>
-      <button id="getDataBtn" class="action-btn" disabled>Obtener Datos</button>
+      <div class="btn-row">
+        <button id="clearBtn" class="clear-btn">Clear</button>
+        <button id="getDataBtn" class="action-btn" disabled>Obtener Datos</button>
+      </div>
+
+      <!-- SECCIÓN ML TEMPLATE -->
+      <div class="ml-section">
+        <div id="dropzoneML">
+          <span id="mlPlaceholder">Arrastrar Template ML Aquí</span>
+          <span id="mlFilename" style="display:none; font-weight:bold;"></span>
+        </div>
+        <button id="downloadBtn" disabled>
+          Descargar Excel
+          <span class="badge" id="rowCounter">0</span>
+        </button>
+
+        <!-- DROPZONE URL -->
+        <div id="dropzoneURL" tabindex="0">
+          <input id="urlHiddenInput" type="text" />
+          <span id="urlPlaceholder">Arrastrar URL Vigente Aquí</span>
+          <span id="urlDisplay" style="display:none; font-weight:bold;">✓ Active Temporary URL</span>
+        </div>
+      </div>
     </div>
+
     <div class="data-panel">
       <div class="field"><label>Pais:</label><input type="text" disabled></div>
       <div class="field"><label>Valor:</label><input type="text" disabled></div>
@@ -64,12 +157,13 @@
         <button id="processBtn" disabled>Procesar Info</button>
       </div>
     </div>
+
     <div class="right-panel">
       <div class="extended-field"><label>Título:</label><input type="text" id="titulo" disabled></div>
       <div class="extended-field"><label>Descripción:</label><textarea id="descripcion" disabled></textarea></div>
 
       <div class="excel-btn-container">
-        <button id="excelBtn" disabled>Generar Excel</button>
+        <button id="excelBtn" disabled>Agregar Fila</button>
       </div>
     </div>
   </div>
@@ -79,13 +173,32 @@
     const placeholder = document.getElementById("placeholder");
     const filenameSpan = document.getElementById("filename");
     const getDataBtn = document.getElementById("getDataBtn");
+    const clearBtn = document.getElementById("clearBtn");
     const processBtn = document.getElementById("processBtn");
     const dropzone = document.getElementById("dropzone");
     const titulo = document.getElementById("titulo");
     const descripcion = document.getElementById("descripcion");
     const excelBtn = document.getElementById("excelBtn");
-    let currentFile = null;
 
+    const dropzoneML = document.getElementById("dropzoneML");
+    const mlPlaceholder = document.getElementById("mlPlaceholder");
+    const mlFilename = document.getElementById("mlFilename");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const rowCounter = document.getElementById("rowCounter");
+
+    const dropzoneURL = document.getElementById("dropzoneURL");
+    const urlPlaceholder = document.getElementById("urlPlaceholder");
+    const urlDisplay = document.getElementById("urlDisplay");
+    const urlHiddenInput = document.getElementById("urlHiddenInput");
+
+    let currentFile = null;
+    let mlWorkbook = null;
+    let mlSheetName = null;
+    let pendingRows = [];
+    let rowCount = 0;
+    let activeURL = "";
+
+    // ── helpers enable/disable ──────────────────────────────────────────────
     function checkEnableProcessBtn() {
       const inputs = document.querySelectorAll(".data-panel input");
       const allEnabled = Array.from(inputs).every(input => !input.disabled);
@@ -101,31 +214,88 @@
       }
     }
 
+    function updateDownloadBtn() {
+      rowCounter.textContent = rowCount;
+      if (mlWorkbook && rowCount > 0) {
+        downloadBtn.disabled = false;
+        downloadBtn.style.cursor = "pointer";
+      } else {
+        downloadBtn.disabled = true;
+        downloadBtn.style.cursor = "not-allowed";
+      }
+    }
+
+    // ── clear ───────────────────────────────────────────────────────────────
+    clearBtn.addEventListener("click", () => {
+      currentFile = null;
+      placeholder.style.display = "inline";
+      filenameSpan.style.display = "none";
+      filenameSpan.textContent = "";
+      dropzone.classList.remove("loaded", "hover");
+
+      getDataBtn.disabled = true;
+      getDataBtn.style.cursor = "not-allowed";
+
+      const inputs = document.querySelectorAll(".data-panel input");
+      inputs.forEach(input => {
+        input.disabled = true;
+        input.value = "";
+      });
+
+      processBtn.disabled = true;
+      processBtn.style.cursor = "not-allowed";
+
+      titulo.disabled = true;
+      titulo.value = "";
+      descripcion.disabled = true;
+      descripcion.value = "";
+
+      excelBtn.disabled = true;
+      excelBtn.style.cursor = "not-allowed";
+    });
+
+    // ── dropzone capturas ───────────────────────────────────────────────────
     ["dragenter","dragover"].forEach(e => dropzone.addEventListener(e, ev => { ev.preventDefault(); ev.stopPropagation(); dropzone.classList.add("hover"); }));
     ["dragleave","drop"].forEach(e => dropzone.addEventListener(e, ev => { ev.preventDefault(); ev.stopPropagation(); dropzone.classList.remove("hover"); }));
 
     dropzone.addEventListener("drop", e => {
       const file = e.dataTransfer.files?.[0];
-      if(file){
+      if (file) {
         currentFile = file;
         placeholder.style.display = "none";
-        filenameSpan.textContent = file.name;
+        filenameSpan.textContent = "✓ Captura Agregada.png";
         filenameSpan.style.display = "inline";
+        dropzone.classList.add("loaded");
         getDataBtn.disabled = false;
         getDataBtn.style.cursor = "pointer";
       }
     });
 
     document.addEventListener("paste", e => {
+      // Si el foco está en el dropzoneURL, capturamos el texto pegado como URL
+      if (document.activeElement === dropzoneURL || document.activeElement === urlHiddenInput) {
+        const text = e.clipboardData?.getData("text") || "";
+        if (text.trim()) {
+          activeURL = text.trim();
+          urlPlaceholder.style.display = "none";
+          urlDisplay.style.display = "inline";
+          dropzoneURL.classList.add("loaded");
+        }
+        e.preventDefault();
+        return;
+      }
+
+      // Comportamiento original: pegar imagen para captura
       const items = e.clipboardData?.items || [];
-      for(const item of items){
-        if(item.type.startsWith("image/")){
+      for (const item of items) {
+        if (item.type.startsWith("image/")) {
           const blob = item.getAsFile();
-          if(blob){
+          if (blob) {
             currentFile = new File([blob], "captura.png", { type: blob.type });
             placeholder.style.display = "none";
-            filenameSpan.textContent = "captura.png";
+            filenameSpan.textContent = "✓ Captura Agregada.png";
             filenameSpan.style.display = "inline";
+            dropzone.classList.add("loaded");
             getDataBtn.disabled = false;
             getDataBtn.style.cursor = "pointer";
             break;
@@ -134,8 +304,47 @@
       }
     });
 
+    // ── dropzone URL: foco al hacer click ──────────────────────────────────
+    dropzoneURL.addEventListener("click", () => {
+      dropzoneURL.focus();
+    });
+
+    // ── dropzone template ML ────────────────────────────────────────────────
+    ["dragenter","dragover"].forEach(e => dropzoneML.addEventListener(e, ev => { ev.preventDefault(); ev.stopPropagation(); dropzoneML.classList.add("hover"); }));
+    ["dragleave","drop"].forEach(e => dropzoneML.addEventListener(e, ev => { ev.preventDefault(); ev.stopPropagation(); dropzoneML.classList.remove("hover"); }));
+
+    dropzoneML.addEventListener("drop", e => {
+      const file = e.dataTransfer.files?.[0];
+      if (file && file.name.match(/\.xlsx$/i)) {
+        loadMLTemplate(file);
+      } else {
+        alert("Por favor arrastrá un archivo .xlsx");
+      }
+    });
+
+    function loadMLTemplate(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          mlWorkbook = XLSX.read(e.target.result, { type: "array" });
+          mlSheetName = mlWorkbook.SheetNames[0];
+          pendingRows = [];
+          rowCount = 0;
+          mlPlaceholder.style.display = "none";
+          mlFilename.textContent = "✓ " + file.name;
+          mlFilename.style.display = "inline";
+          dropzoneML.classList.add("loaded");
+          updateDownloadBtn();
+        } catch(err) {
+          alert("No se pudo leer el archivo. Asegurate que sea un .xlsx válido.");
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    // ── obtener datos ───────────────────────────────────────────────────────
     getDataBtn.addEventListener("click", async () => {
-      if(!currentFile) return;
+      if (!currentFile) return;
       const formData = new FormData();
       formData.append("image", currentFile);
       try {
@@ -145,7 +354,7 @@
         const keys = ["pais","valor","referencia","metal","diametro","fecha","conservacion","fisher","diseno","precio"];
         inputs.forEach((input, i) => {
           input.disabled = false;
-          if(data[keys[i]]) input.value = data[keys[i]];
+          if (data[keys[i]]) input.value = data[keys[i]];
         });
         checkEnableProcessBtn();
       } catch(err) {
@@ -153,6 +362,7 @@
       }
     });
 
+    // ── procesar info ───────────────────────────────────────────────────────
     processBtn.addEventListener("click", () => {
       const inputs = document.querySelectorAll(".data-panel input");
       const getVal = (name) => {
@@ -161,8 +371,7 @@
       };
 
       let tituloText = `${getVal("pais")} - ${getVal("valor")} - Año ${getVal("fecha")} - ${getVal("referencia")}`;
-if(getVal("fisher")) tituloText += ` - ${getVal("fisher")}`;
-
+      if (getVal("fisher")) tituloText += ` - ${getVal("fisher")}`;
 
       titulo.disabled = false;
       titulo.value = tituloText;
@@ -198,7 +407,13 @@ if(getVal("fisher")) tituloText += ` - ${getVal("fisher")}`;
       checkEnableExcelBtn();
     });
 
+    // ── agregar fila ────────────────────────────────────────────────────────
     excelBtn.addEventListener("click", () => {
+      if (!mlWorkbook) {
+        alert("Primero arrastrá el template de ML al dropzone correspondiente.");
+        return;
+      }
+
       const inputs = document.querySelectorAll(".data-panel input");
       const getVal = (name) => {
         const keys = ["pais","valor","referencia","metal","diametro","fecha","conservacion","fisher","diseno","precio"];
@@ -219,94 +434,63 @@ if(getVal("fisher")) tituloText += ` - ${getVal("fisher")}`;
       calcPrecio = Math.ceil(calcPrecio / 100) * 100;
 
       const row = [
-        "", tituloVal, "", estado, "", 
-        "https://http2.mlstatic.com/D_NQ_NP_697806-MLA88371869892_072025-F.jpg",
+        "", tituloVal, "", estado, "",
+        activeURL,
         "", 1, calcPrecio, descVal, 10, 14, 1, 0.1, "", "No agregar cuotas", "", "Mercado Envíos", "A cargo del comprador", "Acepto", "Garantía del vendedor",
-        7, "días", "", Number(fechaVal.replace(",", ".")), paisVal, "", "", metalVal, "", valorVal, 
-        consVal === "Proof" ? "Proof" : "Calidad de Circulación"  // AG
+        7, "días", "", Number(fechaVal.replace(",", ".")), paisVal, "", "", metalVal, "", valorVal,
+        consVal === "Proof" ? "Proof" : "Calidad de Circulación"
       ];
 
-      const ws = XLSX.utils.aoa_to_sheet([row]);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Datos");
-      XLSX.writeFile(wb, "coin_data.xlsx");
+      pendingRows.push(row);
+      rowCount++;
+      updateDownloadBtn();
+
+      excelBtn.textContent = "✓ Fila agregada";
+      excelBtn.style.background = "#198754";
+      setTimeout(() => {
+        excelBtn.textContent = "Agregar Fila";
+        excelBtn.style.background = "#0d6efd";
+      }, 1500);
+    });
+
+    // ── descargar excel ─────────────────────────────────────────────────────
+    downloadBtn.addEventListener("click", () => {
+      if (!mlWorkbook || pendingRows.length === 0) return;
+
+      const ws = mlWorkbook.Sheets[mlSheetName];
+
+      const HEADER_ROWS = 8;
+      const range = XLSX.utils.decode_range(ws["!ref"] || "A1");
+
+      let nextRow = HEADER_ROWS;
+      for (let r = HEADER_ROWS; r <= range.e.r; r++) {
+        const cellB = ws[XLSX.utils.encode_cell({ r, c: 1 })];
+        if (!cellB || !cellB.v) { nextRow = r; break; }
+        nextRow = r + 1;
+      }
+
+      pendingRows.forEach((row, offset) => {
+        row.forEach((val, colIdx) => {
+          if (val === null || val === undefined || val === "") return;
+          const cellRef = XLSX.utils.encode_cell({ r: nextRow + offset, c: colIdx });
+          const cell = { v: val };
+          if (typeof val === "number") {
+            cell.t = "n";
+          } else {
+            cell.t = "s";
+          }
+          ws[cellRef] = cell;
+        });
+      });
+
+      const newRange = {
+        s: { r: 0, c: 0 },
+        e: { r: nextRow + pendingRows.length - 1, c: Math.max(range.e.c, 33) }
+      };
+      ws["!ref"] = XLSX.utils.encode_range(newRange);
+
+      XLSX.writeFile(mlWorkbook, "template_ML_monedas.xlsx");
     });
   </script>
 </body>
 </html>
-<script>
-  const dropzone = document.getElementById('dropzone');
-  const placeholder = document.getElementById('placeholder');
-  const filenameSpan = document.getElementById('filename');
-  const getDataBtn = document.getElementById('getDataBtn');
-  let uploadedFile = null;
-
-  // Función para mostrar la imagen copiada o arrastrada
-  function setImageFile(file) {
-    uploadedFile = file;
-    if (uploadedFile) {
-      placeholder.style.display = 'none';
-      filenameSpan.style.display = 'inline';
-      filenameSpan.textContent = uploadedFile.name;
-      getDataBtn.disabled = false;
-      getDataBtn.style.cursor = 'pointer';
-    }
-  }
-
-  // Drag & Drop
-  dropzone.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    dropzone.classList.add('hover');
-  });
-
-  dropzone.addEventListener('dragleave', () => {
-    dropzone.classList.remove('hover');
-  });
-
-  dropzone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    dropzone.classList.remove('hover');
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image')) {
-      setImageFile(file);
-    } else {
-      alert('Por favor, arrastra solo imágenes.');
-    }
-  });
-
-  // Pegar desde portapapeles
-  dropzone.addEventListener('paste', (e) => {
-    const items = e.clipboardData && e.clipboardData.items;
-    if (!items) return;
-    for (let item of items) {
-      if (item.type.startsWith('image')) {
-        const blob = item.getAsFile();
-        if (blob) {
-          const file = new File([blob], 'pasted-image.png', { type: blob.type });
-          setImageFile(file);
-        }
-        break; // Solo manejar la primera imagen copiada
-      }
-    }
-  });
-
-  // Botón para extraer datos con OCR
-  document.getElementById('getDataBtn').addEventListener('click', async () => {
-    if (!uploadedFile) return;
-    const reader = new FileReader();
-    reader.onload = async () => {
-      const { data: { text } } = await Tesseract.recognize(
-        reader.result,
-        'spa'
-      );
-      const regex = /351\s*-\s*Contribuciones\s+de\s+Seguridad\s+Social\s+([\d.,]+)/i;
-      const match = text.match(regex);
-      if (match) {
-        document.getElementById('conSS').value = match[1];
-      } else {
-        alert("No se encontró el valor de '351 - Contribuciones de Seguridad Social'");
-      }
-    };
-    reader.readAsDataURL(uploadedFile);
-  });
-</script>
