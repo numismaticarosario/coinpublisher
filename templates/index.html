@@ -327,7 +327,7 @@
       reader.onload = (e) => {
         try {
           mlWorkbook = XLSX.read(e.target.result, { type: "array" });
-          mlSheetName = mlWorkbook.SheetNames[0];
+          mlSheetName = "Monedas";
           pendingRows = [];
           rowCount = 0;
           mlPlaceholder.style.display = "none";
