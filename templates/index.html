@@ -152,6 +152,7 @@
       <div class="field"><label>Fisher:</label><input type="text" disabled></div>
       <div class="field"><label>Diseño:</label><input type="text" disabled></div>
       <div class="field"><label>Precio:</label><input type="text" disabled></div>
+      <div class="field"><label>Costo:</label><input type="text" id="costoInput" placeholder="USD"></div>
       <div class="process-btn-row">
         <label></label>
         <button id="processBtn" disabled>Procesar Info</button>
@@ -252,6 +253,8 @@
 
       excelBtn.disabled = true;
       excelBtn.style.cursor = "not-allowed";
+
+      document.getElementById("costoInput").value = "";
     });
 
     // ── dropzone capturas ───────────────────────────────────────────────────
@@ -428,6 +431,19 @@
       const valorVal = getVal("valor");
       const fechaVal = getVal("fecha");
       const metalVal = getVal("metal");
+      const costoVal = parseFloat(document.getElementById("costoInput").value) || 0;
+
+      // ── SKU por costo ───────────────────────────────────────────────────
+      let skuVal = "";
+      if (costoVal > 0) {
+        if (costoVal >= precioVal) {
+          alert("El costo es mayor o igual al valor — no se puede generar el SKU.");
+          return;
+        }
+        const ganancia = Math.round((precioVal - costoVal) * 10) / 10;
+        const fmt = (n) => String(n).replace(".", "P");
+        skuVal = `X${fmt(costoVal)}Z${fmt(ganancia)}`;
+      }
 
       const estado = consVal === "Unc" ? "Nuevo" : "Usado";
       let calcPrecio = ((precioVal * 1500) / 0.84) + 1000;
@@ -436,7 +452,7 @@
       const row = [
         "", tituloVal, "", estado, "",
         activeURL,
-        "", 1, calcPrecio, descVal, 10, 14, 1, 0.1, "", "No agregar cuotas", "", "Mercado Envíos", "A cargo del comprador", "Acepto", "Garantía del vendedor",
+        "", 1, calcPrecio, descVal, 10, 14, 1, 0.1, skuVal, "No agregar cuotas", "", "Mercado Envíos", "A cargo del comprador", "Acepto", "Garantía del vendedor",
         7, "días", "", Number(fechaVal.replace(",", ".")), paisVal, "", "", metalVal, "", valorVal,
         consVal === "Proof" ? "Proof" : "Calidad de Circulación"
       ];
