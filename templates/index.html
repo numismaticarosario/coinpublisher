@@ -152,7 +152,7 @@
       <div class="field"><label>Fisher:</label><input type="text" disabled></div>
       <div class="field"><label>Diseño:</label><input type="text" disabled></div>
       <div class="field"><label>Precio:</label><input type="text" disabled></div>
-      <div class="field"><label>Costo:</label><input type="text" id="costoInput" placeholder="USD"></div>
+      <div class="field"><label>Costo:</label><input type="text" id="costoInput" disabled></div>
       <div class="process-btn-row">
         <label></label>
         <button id="processBtn" disabled>Procesar Info</button>
@@ -254,7 +254,9 @@
       excelBtn.disabled = true;
       excelBtn.style.cursor = "not-allowed";
 
-      document.getElementById("costoInput").value = "";
+      const costoInput = document.getElementById("costoInput");
+      costoInput.value = "";
+      costoInput.disabled = true;
     });
 
     // ── dropzone capturas ───────────────────────────────────────────────────
@@ -359,6 +361,7 @@
           input.disabled = false;
           if (data[keys[i]]) input.value = data[keys[i]];
         });
+        document.getElementById("costoInput").disabled = false;
         checkEnableProcessBtn();
       } catch(err) {
         console.error("Error al obtener datos:", err);
